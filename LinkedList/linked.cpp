@@ -19,11 +19,49 @@ Word * newWord(const string parola)
 	return w;
 }
 
-
 Cell * newStartingCell(Word * w)
 {
 	Cell * c = new Cell();
-	c->data = w;
+	c->data = w;  //come faccio a assegnare la struttura Word a questo field???
 	c->next = nullptr;
-	c->previous = nullptr;
+	return c;
 }
+
+
+Cell * newCell(Word * w)
+{
+	Cell * c = new Cell();
+	c->data = w;
+	return c;
+}
+
+
+Cell * addCellOnHead(Cell * head, Cell * newcell)
+{
+	newcell->next = head;
+	return newcell;
+}
+
+void printCell(Cell * c)
+{
+	//throw "da fare";
+	while(c->next != nullptr)
+	{
+		printWord(c->data);
+		c = c->next;
+	}
+
+	 /*
+
+	Cell * temp = new Cell();
+	temp = c;
+	while(temp->next != nullptr) //non riesco a iterare la lista
+	{
+		Word * pw = new Word();
+		pw = temp->data;
+		printWord(pw);
+		temp = temp->next;
+	} */
+}
+		
+		

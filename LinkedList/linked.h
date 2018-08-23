@@ -9,13 +9,16 @@ struct Word {
 };
 
 struct Cell {
-	struct Word data;
+	Word * data;
 	Cell * next;
-	Cell * previous;
 };
 
 void printWord(const Word * w);
 void insertData(Word * w, string parola);
 Word * newWord(const string parola);
+Cell * addCellOnHead(Cell * head, Cell * newcell);
+void printCell(Cell * c); //da implementare
+Cell * newStartingCell(Word * w);
+Cell * newCell(Word * w);
 
 #endif
