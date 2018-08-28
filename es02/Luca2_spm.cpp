@@ -83,85 +83,57 @@ SparseEntry * add(SparseEntry * matrix, SparseEntry * new_entry)
 }
 
 //rimuove un elemento in una sparseMatrix
+
+int matrixDim(SparseMatrix * matrix)
+{
+	dim = (matrix->nr * matrix->nc) - matrix->nnz;
+	return dim;
+}
 //!!! "rimuove un elemento DA una sparseMatrix"
 void remove(SparseMatrix * matrix, int r, int c)
 {
-	int counter = 1, size = 0; //!!! Sempre inizializzare ogni variabile.
-	SparseEntry * prev = nullptr, * current = nullptr; //!!! Piu' pulito di come era.
-
-	//!!! Verifico che r in [0, nr - 1] e c in [0, nc -1], senno' (r,c) cade fuori dalla matrice densa:
-	if ((r >= matrix->nr) || (c > matrix->nc)) 
+	SparseEntry * current = matrix->store;
+	SparseEntry * next = nullptr;
+	if (nullptr == current)
 		return;
-
-	//!!! Caso "A" del disegno:
-	current = matrix->store;
-	if (current == nullptr) // nessun elemento
-		return;
-
-	//!!! Caso "B" del disegno:
-	if ((current->r == r) && (current->c == c)) { //!!! il primo elemento e' quello da togliere		
-		matrix->store = current->next;
-		delete current;
-		return;
-	}
-
-	size = matrix->nr * matrix->nc; //!!! per evitare dopo di accedere ai campi della struttura ad ogni iterazione.
-
-	//!!! Si assume che (correttamente) la matrice sparsa abbia al piu' tanti elementi quanti la matrice densa.
-	//!!! Inizializzando counter a 1, while deve guardare (counter < size) e non (counter <= size).
-	//!!! Per come lo usiamo, counter indica il numero di entry gia' valutate.
-	while ((nullptr != current->next) && (counter < size)) { //!!! Casi "C", "F" del disegno. Esco.							
-		prev = current; //!!! Casi "D", "G" del disegno.
-		current = current->next; //!!! Casi "D", "G" del disegno.
-		if ((current->r == r) && (current->c == c)) { //!!! Caso "E" del disegno.
-			prev->next = current->next;
+	for (int i = 0; i < matrixDim(matrix); i++) {
+		if (nullptr == current)
+			return;
+		if ((current->nr == r) && (current->nc == c)) {
+			next = current->next;
 			delete current;
-			break;//!!! Chiude il solo ciclo in cui si trova, in questo caso il while.
-			      //!!! Se fosse while(){while(){break;}} allora break chiuderebbe solo il while interno.
+			current = next;
+			next = nullptr;
 		}
-		counter++;
 	}
-	return;
 }
-
-// Codice verificato fino a qui.
 
 // Creazione matrice sparsa a partire da matrice densa
 
 
-//SparseMatrix sparse(const Matrix & m) //perchè per indirizzo e non un puntatore? perchè qua usa la struttura invece che i puntatori?
-SparseMatrix sparse(const Matrix m)
+SparseMatrix sparse(const Matrix & m)
 // input:
 // - Una Matrix m
 // output:
 // - Un valore di tipo SparseMatrix contenente gli elementi di m in una lista
 {	
-	SparseMatrix * sparse_matrix = nullptr;
-	Matrix * dense_matrix = m;
-	//implementare controllo su congruenza righe e colonne
-	if (dense_matrix == nullptr)
-		return sparse_matrix;
-	for (int j = 0; j < dense_matrix->nc; j++)
-	{
-		sparse_matrix->nc = sparse_matrix->nc + 1;
-		for (int i = 0; i < dense_matrix->nr; i++)
-		{
-			if (iszero(dense_matrix->store[i]))
-			{	
-				sparse_matrix->nnz = sparse_matrix->nnz + 1;
+	SparseEntry * entry, * head = nullptr;
+	SparseMatrix s; // la inizializzo a zero
+	s.store = head;
+	s.nr = m.nr;
+	s.nc = m.nc;
+	s.nnz = m.nr * m.nc;
+	
+	for (int r = 0; r < m.store.size(); r++) {//itero per ogni elemento della matrice
+		for (int c = 0; c < m.store[r].size(); c++) {// da verificare l'iterazione
+			if (m.store[r][c] != 0) { // se il valore non è zero, creo la entry e popolo la sparse matrix
+				entry = newentry(m.store[r][c], r, c);
+				head = add(head, entry);
+				s.nnz--;
 			}
-			else if (sparse_matrix == nullptr)
-			{
-				sparse_matrix = newEntry(dense_matrix->store[i], dense_matrix->r, dense_matrix->c);
-			}
-			else
-			{
-				sparse_matrix = add(sparse_matrix, newEntry(dense_matrix->store[i], dense_matrix->r, dense_matrix->c));
-			}
-			sparse_matrix->nr = sparse_matrix->nr + 1;
 		}
 	}
-	return sparse_matrix;
+	return s;
 }
 
 // Creazione matrice densa a partire da matrice sparsa
