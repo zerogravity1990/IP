@@ -4,7 +4,7 @@ using namespace std;
 
 vector<double> v = {2.7,0.0,54.5,0.0,0.0,0.0,8.5,4.7,6.4,416.7,0.0,0.0,0.0,0.0,8.4,7.6,0.0,7.6};
 Matrix m;
-SparseMatrix s; 
+SparseMatrix s;
 void printMatrix(const Matrix m);
 void printAllSparseEntry(const SparseEntry * s);
 void printAllSparseEntry_v2(const SparseEntry * s, int nnz);
@@ -27,8 +27,11 @@ int main()
 	m = matrix(v, 2, 6);
 	printMatrix(m);
 	s = sparse(m);
-	//printAllSparseEntry(s.store);
-	printAllSparseEntry_v2(s.store, s.nnz);	
+	printAllSparseEntry(s.store);
+	//printAllSparseEntry_v2(s.store, s.nnz);
+	
+	m = full(s);
+	printMatrix(m);	
 }
 
 void printMatrix(const Matrix m)
@@ -43,13 +46,11 @@ void printMatrix(const Matrix m)
 
 void printAllSparseEntry(const SparseEntry * s)
 {
-	while(s->next != nullptr){
+	while(s != nullptr){
 		cout << "Indice riga: " << s->r << "\t" << "Indice col: " << s->c << "\t" << "Val: " << s->val;
 		cout << endl;
 		s = s->next;
 	}
-	cout << "Indice riga: " << s->r << "\t" << "Indice col: " << s->c << "\t" << "Val: " << s->val;
-	cout << endl;
 }
 
 void printAllSparseEntry_v2(const SparseEntry * s, int nnz)
