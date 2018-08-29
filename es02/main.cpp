@@ -7,6 +7,7 @@ Matrix m;
 SparseMatrix s; 
 void printMatrix(const Matrix m);
 void printAllSparseEntry(const SparseEntry * s);
+void printAllSparseEntry_v2(const SparseEntry * s, int nnz);
 
 
 int main()
@@ -26,7 +27,8 @@ int main()
 	m = matrix(v, 2, 6);
 	printMatrix(m);
 	s = sparse(m);
-	printAllSparseEntry(s.store);
+	//printAllSparseEntry(s.store);
+	printAllSparseEntry_v2(s.store, s.nnz);	
 }
 
 void printMatrix(const Matrix m)
@@ -48,6 +50,15 @@ void printAllSparseEntry(const SparseEntry * s)
 	}
 	cout << "Indice riga: " << s->r << "\t" << "Indice col: " << s->c << "\t" << "Val: " << s->val;
 	cout << endl;
+}
+
+void printAllSparseEntry_v2(const SparseEntry * s, int nnz)
+{
+	for (int i = 0; i < nnz; i++){
+		cout << "Indice riga: " << s->r << "\t" << "Indice col: " << s->c << "\t" << "Val: " << s->val;
+		cout << endl;
+		s = s->next;
+	}
 }
 
 
